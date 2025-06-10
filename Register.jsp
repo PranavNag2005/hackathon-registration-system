@@ -33,9 +33,17 @@
         <div class="g-recaptcha" data-sitekey="6LcHoVgrAAAAANEZvPFfWDVCAdIuSVz7go5IcuhG"></div><br>
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-      
+      <% String password=request.getParameter("passwords");
+    if(password!=null && password.equals("1")){%>
+    <p style="color:red;text-align:center;";>Password does not match</p>
+    <%} 
+    %>
+    <%String user=request.getParameter("exists");
+    if(user!=null && user.equals("1")){%>
+    <p style="color:red;text-align:center;";>Email or phone number already exists </p>
+    <%} %>
         <input type="submit" value="Register">
-    
+    <p style="text-align:center;">Have an Account <a href="login.jsp">Login Here</a></p>
     </form>
     
 </body>

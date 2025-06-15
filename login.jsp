@@ -26,10 +26,39 @@
         <div class="g-recaptcha" data-sitekey="6LcHoVgrAAAAANEZvPFfWDVCAdIuSVz7go5IcuhG"></div><br>
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-     
+    <%String error=request.getParameter("error");
+    if(error!=null && error.equals("Captcha failed")){%>
+    <p style="color:red;text-align:center;">Captcha verification failed.</p>
+    <%} %>
+
+    	
+    <%String email=request.getParameter("email");
+    if(email!=null && email.equals("pass")){%>
+    <p style="color:red;text-align:center;">Invalid email or password mismatch</p>
+    <%} %>
+    
+    
+    <% String forgotpassword=request.getParameter("forgotpassword");
+    if(forgotpassword!=null && forgotpassword.equals("success")){%>
+    <p style="color:green;text-align:center;">Password Updated Successfully.</p>
+    <%} %>
+    
+    
+    
+    
+    
         <input type="submit" value="Register">
     
-    <p style="text-align:center;">Dont't have account ? <a href="Register.jsp">Create One</a></p>
+    
+    
+    
+    
+  <div style="display: flex; justify-content: space-between;">
+  <a href="forgot.jsp">Forgot Password</a>
+  <a href="Register.jsp">Create One</a>
+</div>
+
+
     </form>
 </body>
 </html>

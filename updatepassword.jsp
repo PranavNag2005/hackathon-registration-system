@@ -71,10 +71,6 @@ if(seession==null || seession.getAttribute("email")==null){
     
         <input type="submit" value="Update Password">
     
-    
-    
-    
-    
   
 
 

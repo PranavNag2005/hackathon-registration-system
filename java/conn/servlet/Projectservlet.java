@@ -27,33 +27,7 @@ public class Projectservlet extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-
-        // ✅ Check if session is valid
-        if (session == null || session.getAttribute("sid") == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        // ✅ Retrieve sid and fetch project
-        int sid = (int) session.getAttribute("sid");
-        System.out.println("SID from session: " + sid);
-
-        Project project = dao.getProjectBySid(sid);
-
-        // ✅ Log what we received from DB
-        if (project != null) {
-            System.out.println("From Servlet → Title: " + project.getTitle());
-        } else {
-            System.out.println("No project found for sid: " + sid);
-        }
-
-        // ✅ Send project to JSP for pre-filling the form
-        request.setAttribute("project", project);
-        request.getRequestDispatcher("project.jsp").forward(request, response);
-    }
+   
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		HttpSession s=request.getSession(false);

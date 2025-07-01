@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="conn.dao.Daomethodsimpl" %>
+<%@ page import="conn.dao.Activity" %>
+<%@ page import="conn.dao.Project" %>
+<%@ page import="java.util.*" %>
 <%
     // Check if user is logged in
     HttpSession sessions = request.getSession(false);
@@ -19,6 +22,9 @@
     
     // Handle password update message
     String passwordUpdate = request.getParameter("password");
+    Project project = dao.getProjectBySid(userId);
+    boolean githubSubmitted = project != null && project.isGithubSubmitted();
+    boolean docsSubmitted = project != null && project.isDocsSubmitted();
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -139,6 +145,15 @@
             border-left-color: var(--accent-color);
         }
         
+        .disabled-card {
+            opacity: 0.7;
+            border-left-color: #ccc !important;
+        }
+        
+        .disabled-card .step-icon {
+            color: #ccc !important;
+        }
+        
         .step-icon {
             font-size: 28px;
             margin-right: 15px;
@@ -192,6 +207,11 @@
             background-color: var(--primary-color);
             color: white;
             transform: translateY(-2px);
+        }
+        
+        .btn-outline-secondary {
+            border-color: #ccc;
+            color: #666;
         }
         
         .status-badge {
@@ -257,6 +277,21 @@
             100% { transform: scale(1); }
         }
         
+        .list-group-item {
+            padding: 12px 0;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .list-group-item:hover {
+            background-color: rgba(108, 99, 255, 0.05);
+            border-left-color: var(--primary-color);
+        }
+        
+        .text-info {
+            color: #17a2b8;
+        }
+        
         @media (max-width: 768px) {
             .main-content {
                 padding: 20px;
@@ -279,7 +314,6 @@
     </style>
 </head>
 <body>
-    <!-- [Rest of your JSP body content remains exactly the same] -->
     <!-- Password Update Message -->
     <% if ("updated".equals(passwordUpdate)) { %>
         <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
@@ -303,9 +337,15 @@
                         <a class="nav-link active" href="welcome.jsp"><i class="fas fa-file-alt me-1"></i> Project Details</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <%= hasProject ? "" : "disabled" %>" 
-                           href="<%= hasProject ? "#github" : "javascript:void(0)" %>">
-                           <i class="fab fa-github me-1"></i> Submit GitHub & Doc
+                        <a class="nav-link <%= hasProject && !githubSubmitted ? "" : "disabled" %>" 
+                           href="<%= hasProject && !githubSubmitted ? "github.jsp" : "javascript:void(0)" %>">
+                           <i class="fab fa-github me-1"></i> Submit GitHub
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <%= hasProject && !docsSubmitted ? "" : "disabled" %>" 
+                           href="<%= hasProject && !docsSubmitted ? "worddoc.jsp" : "javascript:void(0)" %>">
+                           <i class="fas fa-file-word me-1"></i> Submit Docs
                         </a>
                     </li>
                 </ul>
@@ -338,9 +378,9 @@
                 <p class="text-muted">Here's what you need to do next for the hackathon submission.</p>
                 
                 <div class="d-flex align-items-center mt-3">
-                    <span class="status-badge <%= hasProject ? "badge-complete" : "badge-pending pulse-animation" %> me-3">
-                        <i class="fas <%= hasProject ? "fa-check-circle" : "fa-clock" %> me-1"></i>
-                        <%= hasProject ? "Submission Complete" : "Submission Pending" %>
+                    <span class="status-badge <%= hasProject && githubSubmitted && docsSubmitted ? "badge-complete" : "badge-pending pulse-animation" %> me-3">
+                        <i class="fas <%= hasProject && githubSubmitted && docsSubmitted ? "fa-check-circle" : "fa-clock" %> me-1"></i>
+                        <%= hasProject && githubSubmitted && docsSubmitted ? "Submission Complete" : "Submission Pending" %>
                     </span>
                     <small class="text-muted">Deadline: June 30, 2023 at 11:59 PM</small>
                 </div>
@@ -348,70 +388,148 @@
           
             <!-- Progress Steps -->
             <div class="row">
+                <!-- Project Details Step -->
                 <div class="col-md-4">
                     <div class="step-card <%= hasProject ? "step-complete" : "" %>">
                         <div class="d-flex align-items-center">
                             <div class="step-icon"><i class="fas fa-file-alt"></i></div>
                             <div>
                                 <h5>Project Details</h5>
-                                <p class="text-muted mb-2"><%= hasProject ? "Update your project information" : "Submit your project information" %></p>
+                                <p class="text-muted mb-2">
+                                    <%= hasProject ? "Project submitted - You can edit" : "Complete your project details first" %>
+                                </p>
                                 <a href="<%= hasProject ? "Projectservlet?mode=edit" : "project.jsp" %>" 
                                    class="btn <%= hasProject ? "btn-success" : "btn-primary" %> btn-sm">
-                                    <%= hasProject ? "Edit Project" : "Complete Form" %>
+                                    <%= hasProject ? "Edit Project" : "Start Project Form" %>
                                     <i class="fas fa-arrow-right ms-2"></i>
                                 </a>
+                                <% if (hasProject) { %>
+                                    <div class="mt-2">
+                                        <small class="text-muted">Project Name:</small><br>
+                                        <strong><%= project.getTitle() %></strong>
+                                    </div>
+                                <% } %>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
+                <!-- GitHub Submission Step -->
                 <div class="col-md-4">
-                    <div class="step-card <%= hasProject ? "step-complete" : "" %>">
+                    <div class="step-card <%= githubSubmitted ? "step-complete" : (hasProject ? "" : "disabled-card") %>">
                         <div class="d-flex align-items-center">
-                            <div class="step-icon"><i class="fab fa-github"></i></div>
+                            <div class="step-icon">
+                                <i class="fab fa-github <%= githubSubmitted ? "text-success" : (hasProject ? "" : "text-muted") %>"></i>
+                            </div>
                             <div>
-                                <h5>GitHub Repository</h5>
-                                <p class="text-muted mb-2"><%= hasProject ? "Update your project code link" : "Submit your project code link" %></p>
-                                <a href="<%= hasProject ? "#github" : "javascript:void(0)" %>" 
-                                   class="btn <%= hasProject ? "btn-success" : "btn-outline-primary disabled" %> btn-sm">
-                                    <%= hasProject ? "Update GitHub" : "Not Available" %>
-                                    <i class="fas <%= hasProject ? "fa-unlock" : "fa-lock" %> ms-2"></i>
-                                </a>
+                                <h5 class="<%= hasProject ? "" : "text-muted" %>">GitHub Repository</h5>
+                                <% if (githubSubmitted) { %>
+                                    <p class="text-success mb-2">
+                                        <i class="fas fa-check-circle"></i> Submitted (cannot be changed)
+                                    </p>
+                                    <button class="btn btn-success btn-sm" disabled>
+                                        <i class="fas fa-lock"></i> Locked
+                                    </button>
+                                    <div class="mt-2">
+                                        <small>Submitted URL:</small><br>
+                                        <span class="text-truncate d-inline-block" style="max-width: 200px;">
+                                            <%= project.getGithubUrl() %>
+                                        </span>
+                                    </div>
+                                <% } else { %>
+                                    <p class="text-muted mb-2">
+                                        <%= hasProject ? "Submit your project code link" : "Complete project form first" %>
+                                    </p>
+                                    <a href="<%= hasProject ? "github.jsp" : "#" %>" 
+                                       class="btn <%= hasProject ? "btn-primary" : "btn-outline-secondary disabled" %> btn-sm"
+                                       <%= hasProject ? "" : "tabindex=\"-1\" aria-disabled=\"true\"" %>>
+                                        <%= hasProject ? "Submit GitHub" : "Not Available" %>
+                                    </a>
+                                <% } %>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
+                <!-- Documentation Step -->
                 <div class="col-md-4">
-                    <div class="step-card <%= hasProject ? "step-complete" : "" %>">
+                    <div class="step-card <%= docsSubmitted ? "step-complete" : (hasProject ? "" : "disabled-card") %>">
                         <div class="d-flex align-items-center">
-                            <div class="step-icon"><i class="fas fa-file-word"></i></div>
+                            <div class="step-icon">
+                                <i class="fas fa-file-word <%= docsSubmitted ? "text-success" : (hasProject ? "" : "text-muted") %>"></i>
+                            </div>
                             <div>
-                                <h5>Documentation</h5>
-                                <p class="text-muted mb-2"><%= hasProject ? "Update your project documentation" : "Upload your project documentation" %></p>
-                                <a href="<%= hasProject ? "#documentation" : "javascript:void(0)" %>" 
-                                   class="btn <%= hasProject ? "btn-success" : "btn-outline-primary disabled" %> btn-sm">
-                                    <%= hasProject ? "Update Docs" : "Not Available" %>
-                                    <i class="fas <%= hasProject ? "fa-unlock" : "fa-lock" %> ms-2"></i>
-                                </a>
+                                <h5 class="<%= hasProject ? "" : "text-muted" %>">Documentation</h5>
+                                <% if (docsSubmitted) { %>
+                                    <p class="text-success mb-2">
+                                        <i class="fas fa-check-circle"></i> Submitted (cannot be changed)
+                                    </p>
+                                    <button class="btn btn-success btn-sm" disabled>
+                                        <i class="fas fa-lock"></i> Locked
+                                    </button>
+                                    <div class="mt-2">
+                                        <a href="download?file=<%= project.getTitle() %>" 
+                                           class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-download"></i> Download Document
+                                        </a>
+                                    </div>
+                                <% } else { %>
+                                    <p class="text-muted mb-2">
+                                        <%= hasProject ? "Upload your project documentation" : "Complete project form first" %>
+                                    </p>
+                                    <a href="<%= hasProject ? "worddoc.jsp" : "#" %>" 
+                                       class="btn <%= hasProject ? "btn-primary" : "btn-outline-secondary disabled" %> btn-sm"
+                                       <%= hasProject ? "" : "tabindex=\"-1\" aria-disabled=\"true\"" %>>
+                                        <%= hasProject ? "Upload Docs" : "Not Available" %>
+                                    </a>
+                                <% } %>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Recent Activity -->
+            <!-- Activity Feed -->
             <div class="welcome-card mt-4">
                 <h5><i class="fas fa-history me-2" style="color: var(--secondary-color);"></i> Recent Activity</h5>
                 <ul class="list-group list-group-flush mt-3" id="activityFeed">
-                    <% if (hasProject) { %>
-                        <li class="list-group-item border-0 ps-0">
-                            <i class="fas fa-check-circle text-success me-2"></i>
-                            <span>Project details submitted on <%= new java.util.Date() %></span>
-                        </li>
-                    <% } else { %>
+                    <% 
+                    List<Activity> activities = dao.getUserActivities(userId);
+                    if (activities.isEmpty()) { %>
                         <li class="list-group-item border-0 ps-0"><small>No recent activity yet</small></li>
-                    <% } %>
+                    <% } else {
+                        for (Activity activity : activities) { 
+                            String icon = "";
+                            String textClass = "";
+                            
+                            switch(activity.getActivityType()) {
+                                case "PROJECT_CREATE":
+                                    icon = "fa-file-alt";
+                                    break;
+                                case "PROJECT_EDIT":
+                                    icon="fa-file-pen";
+                                    break;
+                                case "GITHUB_UPDATE":
+                                    icon = "fab fa-github";
+                                    break;
+                                case "DOCS_UPLOAD":
+                                    icon = "fa-file-word";
+                                    break;
+                                case "PASSWORD_CHANGE":
+                                    icon = "fa-key";
+                                    textClass = "text-info";
+                                    break;
+                                default:
+                                    icon = "fa-check-circle";
+                            }
+                    %>
+                        <li class="list-group-item border-0 ps-0 <%= textClass %>">
+                            <i class="fas <%= icon %> me-2"></i>
+                            <span><%= activity.getActivityDetails() %> - 
+                            <small class="text-muted"><%= activity.getActivityDate() %></small></span>
+                        </li>
+                    <%   }
+                       } %>
                 </ul>
             </div>
         </div>
@@ -443,37 +561,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Toast notification function
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            let iconClass;
-            if (type === 'success') {
-                iconClass = 'fa-check-circle';
-            } else if (type === 'danger') {
-                iconClass = 'fa-exclamation-circle';
-            } else {
-                iconClass = 'fa-info-circle';
-            }
-            
-            toast.className = `toast show align-items-center text-white bg-${type} border-0 position-fixed bottom-0 end-0 m-3`;
-            toast.style.zIndex = '9999';
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="fas ${iconClass} me-2"></i>
-                        ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            `;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 5000);
-        }
-
         // Auto-dismiss alert after 5 seconds
         setTimeout(() => {
             const alert = document.querySelector('.alert');
@@ -482,6 +569,14 @@
                 setTimeout(() => alert.remove(), 300);
             }
         }, 5000);
+        
+        // Disable navigation links for completed steps
+        document.querySelectorAll('.nav-link.disabled').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('This step is already completed and cannot be modified');
+            });
+        });
     </script>
 </body>
 </html>

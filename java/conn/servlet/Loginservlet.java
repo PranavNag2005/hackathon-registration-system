@@ -29,11 +29,24 @@ public class Loginservlet extends HttpServlet {
 		String password=request.getParameter("password");
 		String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 		boolean isCaptchaValid = CaptchaVerifier.verifyCaptcha(gRecaptchaResponse);
+		if (!isCaptchaValid) {
+	        response.sendRedirect("login.jsp?error=Captcha failed"); // Notify user of CAPTCHA failure
+	        return; // Stop further execution
+	    }
+
 		if(isCaptchaValid) {
 			if(dao.validuser(email, password)) {
 				HttpSession session=request.getSession();
+				 String name = dao.getUsernameByEmail(email);
+				 int sid=dao.getuseridbyemail(email);
+				 session.setAttribute("sid", sid);
+				session.setAttribute("email", email);
+				session.setAttribute("name", name);
 				
 				response.sendRedirect("welcome.jsp");
+			}
+			else {
+				response.sendRedirect("login.jsp?invalidpassword=0");
 			}
 		}
 	}

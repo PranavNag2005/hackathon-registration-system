@@ -6,10 +6,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 
 import conn.dao.CaptchaVerifier;
 import conn.dao.Daomethodsimpl;
-
+import org.mindrot.jbcrypt.BCrypt;
 @WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -33,15 +34,23 @@ public class RegisterServlet extends HttpServlet {
 		System.out.println(fullname+" "+email+" "+phonenumber+" "+dob+" "+password);
 		String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 		boolean isCaptchaValid = CaptchaVerifier.verifyCaptcha(gRecaptchaResponse);
-
+try {
 		if (isCaptchaValid) {
 		    if (password.equals(confirmpassword)) {
-		        if (dao.createuser(fullname, email, phonenumber, dob, password)) {
+		    	if(!dao.validemail(email)) {
+		    		String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12));
+
+		        if (dao.createuser(fullname, email, phonenumber, dob, hashedPassword)) {
 		            response.sendRedirect("login.jsp?registration=success");
 		        } else {
-		            response.sendRedirect("Register.jsp?exists=1");
+		            response.sendRedirect("Register.jsp?errorcreation=1");
 		        }
 		    }
+		    	 else {
+				    	response.sendRedirect("Register.jsp?exists=1");
+				    }
+		    	}
+		   
 		    else {
 	            response.sendRedirect("Register.jsp?passwords=1");
 	        }
@@ -50,5 +59,8 @@ public class RegisterServlet extends HttpServlet {
 		}
 
 	}
+	catch(Exception e) {
+		e.printStackTrace();
+	}
 
-}
+}}

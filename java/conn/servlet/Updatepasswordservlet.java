@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import conn.dao.Daomethodsimpl;
 
 
@@ -27,10 +29,15 @@ public class Updatepasswordservlet extends HttpServlet {
 		HttpSession session = request.getSession(false);
 	    String email = (String) session.getAttribute("email");
 	    if(password.equals(confirmpassword)&& dao.validuser(email, currentpassword)) {
-	    	boolean is=dao.updatepassword(email, password);
+	    	String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12));
+
+	    	boolean is=dao.updatepassword(email, hashedPassword);
 	    	if(is) {
-	    		HttpSession sessions=request.getSession(false);
-	    		sessions.setAttribute("passwordUpdate", "success");
+	    		
+	    		
+	    		int sid=(int)session.getAttribute("sid");
+	    		session.setAttribute("passwordUpdate", "success");
+	    		dao.logactivity(sid, "PASSWORD_CHANGE", "Password updated");
 	    		response.sendRedirect("welcome.jsp");
 	    	}
 	    	

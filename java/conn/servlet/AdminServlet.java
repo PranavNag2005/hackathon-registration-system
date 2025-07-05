@@ -44,7 +44,16 @@ public class AdminServlet extends HttpServlet {
 				 session.setAttribute("admin_id", sid);
 				session.setAttribute("email", email);
 				session.setAttribute("name", name);
-				
+				int githubcount=dao.getgithubcount();
+				int doccount=dao.getwordcount();
+				int both=dao.getprojectdocscount();
+				int registered=dao.gettotalregister();
+				int project=dao.getprojectcount();
+				session.setAttribute("githubCount", githubcount);
+				session.setAttribute("docCount", doccount);
+				session.setAttribute("bothCount", both);
+				session.setAttribute("registeredCount", registered);
+				session.setAttribute("projectsubmitted",project);
 				response.sendRedirect("admindashboard.jsp");
 			}
 			else {

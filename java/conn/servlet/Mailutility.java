@@ -50,5 +50,44 @@ public class Mailutility {
         System.out.println("successfully");
     }
     
+
+        public  void sendRegistrationEmail(String recipientEmail) throws MessagingException {
+            final String senderEmail = "uppalapatipranavnag@gmail.com";   // Replace with a secure config in production
+            final String senderPassword = "lcft vipq ywwl corq";           // Consider moving this to an environment variable
+
+            // Email properties
+            Properties props = new Properties();
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+
+            // Auth session
+            Session session = Session.getInstance(props, new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(senderEmail, senderPassword);
+                }
+            });
+
+            // Compose message
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(senderEmail));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));
+            message.setSubject("✅ Registration Successful");
+
+            // Email HTML content
+            String htmlContent = "<h2 style='color:#27AE60;'>🎉 Registration Successful!</h2>"
+                    + "<p style='font-size:16px;'>Hello there! 👋<br><br>"
+                    + "We're excited to let you know that your registration was <strong>successful</strong>.<br><br>"
+                    
+                    + "<p style='font-size:15px; color:#555;'>If you have any questions, feel free to reach out to our support team.</p>"
+                    + "<hr><p style='font-size:13px; color:#999;'>- Regards,<br><strong>Admin Team</strong></p>";
+
+            message.setContent(htmlContent, "text/html; charset=utf-8");
+
+            // Send
+            Transport.send(message);
+            System.out.println("Registration email sent successfully!");
+        }
+    }
     
-}

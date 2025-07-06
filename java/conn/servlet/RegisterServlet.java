@@ -15,7 +15,7 @@ import org.mindrot.jbcrypt.BCrypt;
 public class RegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static Daomethodsimpl dao=new Daomethodsimpl();
-       
+    Mailutility m=new Mailutility();
     
     public RegisterServlet() {
         super();
@@ -41,6 +41,7 @@ try {
 		    		String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12));
 
 		        if (dao.createuser(fullname, email, phonenumber, dob, hashedPassword)) {
+		        	m.sendRegistrationEmail(email);
 		            response.sendRedirect("login.jsp?registration=success");
 		        } else {
 		            response.sendRedirect("Register.jsp?errorcreation=1");

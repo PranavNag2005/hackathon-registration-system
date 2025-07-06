@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-
 @WebServlet("/Verifyotpservlet")
 public class Verifyotpservlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

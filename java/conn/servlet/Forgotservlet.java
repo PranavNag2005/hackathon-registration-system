@@ -5,7 +5,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
+
+import org.mindrot.jbcrypt.BCrypt;
 
 import conn.dao.CaptchaVerifier;
 import conn.dao.Daomethodsimpl;
@@ -24,17 +28,19 @@ public class Forgotservlet extends HttpServlet {
 
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String email=request.getParameter("email");
+		HttpSession session = request.getSession(false);
+		if (session == null || session.getAttribute("email") == null) {
+		    response.sendRedirect("login.jsp?error=sessionExpired");
+		    return;
+		}
+		String email=(String)session.getAttribute("email");
 		String password=request.getParameter("password");
 		String confirmpassword=request.getParameter("confirmpassword");
-		String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
-		boolean isCaptchaValid = CaptchaVerifier.verifyCaptcha(gRecaptchaResponse);
-		if (!isCaptchaValid) {
-	        response.sendRedirect("login.jsp?error=Captcha failed"); // Notify user of CAPTCHA failure
-	        return; // Stop further execution
-	    }
+		
 		if(password.equals(confirmpassword) && dao.validemail(email)) {
-			dao.forgotpassword(email, password);
+			String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12));
+
+			dao.forgotpassword(email, hashedPassword);
 			response.sendRedirect("login.jsp?forgotpassword=success");
 			
 		}

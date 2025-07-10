@@ -38,41 +38,48 @@ public class DoucmentUploadServlet extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Part filePart = request.getPart("documentFile");
-		System.out.println(filePart+" was printed");
         String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-        System.out.println(fileName);
+        String fileType = "docx";
+        HttpSession session = request.getSession(false);
+        int sid = (int) session.getAttribute("sid");
         String message;
-        String uploadPath;
-        String filetype="docx";
-        HttpSession sessions=request.getSession(false);
-		int sid=(int)sessions.getAttribute("sid");
-		String activityType="DOCS_UPLOAD";
-		String activityMessage="Document uploaded successfully";
 
-        // Check file extension
+        // Extension check
         if (!fileName.toLowerCase().endsWith(".docx")) {
             message = "❌ Only .docx files are allowed.";
-            System.out.println(message);
-        } else {
-            long fileSize = filePart.getSize();
-
-            if (fileSize < MIN_FILE_SIZE || fileSize > MAX_FILE_SIZE) {
-                message = "❌ File must be between 5MB and 10MB.";
-                System.out.println(message);
-            } else {
-            	 uploadPath = "C:/Users/uppal/OneDrive/Dokumen/Desktop/uploads";
-                File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) uploadDir.mkdir();
-
-                filePart.write(uploadPath + File.separator + fileName);
-                message = "✅ Your .docx file was uploaded successfully!";
-                System.out.println(message);
-                dao.insertdocument(sid, fileName,uploadPath, filetype, true);
-                dao.logactivity(sid, activityType, activityMessage);
-            }
+            request.setAttribute("message", message);
+            return;
         }
-        request.setAttribute("message", message);
 
+        // File size validation
+        long fileSize = filePart.getSize();
+        if (fileSize < MIN_FILE_SIZE || fileSize > MAX_FILE_SIZE) {
+            message = "❌ File must be between 5MB and 20MB.";
+            request.setAttribute("message", message);
+            return;
+        }
+
+        // Construct upload path
+        String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads";
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) uploadDir.mkdirs();
+
+        // Save file
+        File savedFile = new File(uploadPath + File.separator + fileName);
+        filePart.write(savedFile.getAbsolutePath());
+
+        // Save relative path for browser access
+        String dbFilePath = "uploads/" + fileName;
+        dao.insertdocument(sid, fileName, dbFilePath, fileType, true);
+
+        // Log activity
+        dao.logactivity(sid, "DOCS_UPLOAD", "Document uploaded successfully");
+
+        // Redirect to welcome page
+        
+        response.sendRedirect("welcome.jsp");
+        
+
+	
 	}
-
 }

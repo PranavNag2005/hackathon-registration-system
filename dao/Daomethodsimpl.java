@@ -10,8 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.mindrot.jbcrypt.BCrypt;
 public class Daomethodsimpl implements Daomethods{
-public  boolean createuser(String name,String email,String phonenumber,String dateofbirth,String password){
-	String query="Insert into users(name,email,phonenumber,dateofbirth,password) values (?,?,?,?,?)";
+public  boolean createuser(String name,String email,String phonenumber,String dateofbirth,String password,String rollnumber,String branch,String year,String clgname){
+	String query="Insert into users(name,email,phonenumber,dateofbirth,password,roll_number,branch,year_of_study,college_name) values (?,?,?,?,?,?,?,?,?)";
 	try(Connection conn=Dbconnection.getconnection()){
 		PreparedStatement pt=conn.prepareStatement(query);
 		pt.setString(1,name);
@@ -19,7 +19,10 @@ public  boolean createuser(String name,String email,String phonenumber,String da
 		pt.setString(3, phonenumber);
 		pt.setString(4, dateofbirth);
 		pt.setString(5, password);
-		
+		pt.setString(6, rollnumber);
+		pt.setString(7, branch);
+		pt.setString(8, year);
+		pt.setString(9, clgname);
 		int rs=pt.executeUpdate();
 		
 		System.out.println("user created successfully");
@@ -256,4 +259,3 @@ public boolean insertdocument(int sid,String filename,String filepath,String fil
 	}return false;
 }
 }
-

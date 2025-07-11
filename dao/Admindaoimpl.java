@@ -157,7 +157,7 @@ public class Admindaoimpl {
 	public List<Users> viewUsers() {
 	    List<Users> userList = new ArrayList<>();
 
-	    String query = "SELECT name, email, phonenumber, dateofbirth FROM users";
+	    String query = "SELECT name, email, phonenumber, dateofbirth,college_name,branch FROM users";
 
 	    try (Connection conn = Dbconnection.getconnection()) {
 	        Statement st = conn.createStatement();
@@ -171,7 +171,8 @@ public class Admindaoimpl {
 	            user.setEmail(rs.getString("email"));
 	            user.setPhoneNumber(rs.getString("phonenumber"));
 	            user.setDateOfBirth(rs.getDate("dateofbirth"));
-
+	            user.setCollegeName(rs.getString("college_name"));
+	            user.setBranch(rs.getString("branch"));
 	            userList.add(user);
 	        }
 

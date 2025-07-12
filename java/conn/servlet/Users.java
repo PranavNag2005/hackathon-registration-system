@@ -1,9 +1,6 @@
 package conn.servlet;
 
 import java.sql.Date;
-package conn.servlet;
-
-import java.sql.Date;
 
 public class Users {
     private String name;
@@ -12,7 +9,7 @@ public class Users {
     private Date dateOfBirth;
     private String rollNumber;
     private String branch;
-    private int yearOfStudy;
+    private String yearOfStudy;
     private String collegeName;
 
 
@@ -39,10 +36,10 @@ public class Users {
 	public void setBranch(String branch) {
 		this.branch = branch;
 	}
-	public int getYearOfStudy() {
+	public String getYearOfStudy() {
 		return yearOfStudy;
 	}
-	public void setYearOfStudy(int yearOfStudy) {
+	public void setYearOfStudy(String yearOfStudy) {
 		this.yearOfStudy = yearOfStudy;
 	}
 	public String getCollegeName() {
@@ -51,22 +48,4 @@ public class Users {
 	public void setCollegeName(String collegeName) {
 		this.collegeName = collegeName;
 	}
-}
-public class Users {
-    private String name;
-    private String email;
-    private String phoneNumber;
-    private Date dateOfBirth;
-
-    // Getters
-    public String getName() { return name; }
-    public String getEmail() { return email; }
-    public String getPhoneNumber() { return phoneNumber; }
-    public Date getDateOfBirth() { return dateOfBirth; }
-
-    // Setters
-    public void setName(String name) { this.name = name; }
-    public void setEmail(String email) { this.email = email; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
-    public void setDateOfBirth(Date dateOfBirth) { this.dateOfBirth = dateOfBirth; }
 }

@@ -31,6 +31,10 @@ public class RegisterServlet extends HttpServlet {
 		String dob=request.getParameter("dob");
 		String password=request.getParameter("password");
 		String confirmpassword=request.getParameter("confirmpassword");
+		String rollnumber=request.getParameter("rollnumber");
+		String branch=request.getParameter("branch");
+		String year=request.getParameter("year");
+		String clgname=request.getParameter("collegename");
 		System.out.println(fullname+" "+email+" "+phonenumber+" "+dob+" "+password);
 		String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 		boolean isCaptchaValid = CaptchaVerifier.verifyCaptcha(gRecaptchaResponse);
@@ -40,7 +44,7 @@ try {
 		    	if(!dao.validemail(email)) {
 		    		String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12));
 
-		        if (dao.createuser(fullname, email, phonenumber, dob, hashedPassword)) {
+		        if (dao.createuser(fullname,email,phonenumber,dob,password, rollnumber,branch,year,clgname)) {
 		        	m.sendRegistrationEmail(email);
 		            response.sendRedirect("login.jsp?registration=success");
 		        } else {

@@ -15,8 +15,8 @@ import jakarta.mail.internet.MimeMessage;
 public class Mailutility {
 
     public   void sendOTP(String recipientEmail, String otp) throws MessagingException {
-        final String senderEmail = "uppalapatipranavnag@gmail.com";         
-        final String senderPassword = "lcft vipq ywwl corq";     
+        final String senderEmail = "teamofadm1n123@gmail.com";         
+        final String senderPassword = "pvtd aodb trnm wspa";     
 
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
@@ -34,7 +34,7 @@ public class Mailutility {
         MimeMessage message = new MimeMessage(session);
         message.setFrom(new InternetAddress(senderEmail));
         message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));
-        message.setSubject("🔐 Your OTP Code");
+        message.setSubject("🔐 Your OTP Code for password Reset");
         
 
         String htmlContent = "<h2 style='color:#2E86C1;'>Your One-Time Password</h2>"
@@ -52,8 +52,8 @@ public class Mailutility {
     
 
         public  void sendRegistrationEmail(String recipientEmail) throws MessagingException {
-            final String senderEmail = "uppalapatipranavnag@gmail.com";   // Replace with a secure config in production
-            final String senderPassword = "lcft vipq ywwl corq";           // Consider moving this to an environment variable
+            final String senderEmail = "teamofadm1n123@gmail.com";   // Replace with a secure config in production
+            final String senderPassword = "pvtd aodb trnm wspa";           // Consider moving this to an environment variable
 
             // Email properties
             Properties props = new Properties();
@@ -87,7 +87,45 @@ public class Mailutility {
 
             // Send
             Transport.send(message);
-            System.out.println("Registration email sent successfully!");
+           
+        }
+        public  void sendpasswordupdatemail(String recipientEmail) throws MessagingException {
+            final String senderEmail = "teamofadm1n123@gmail.com";   // Replace with a secure config in production
+            final String senderPassword = "pvtd aodb trnm wspa";           // Consider moving this to an environment variable
+
+            // Email properties
+            Properties props = new Properties();
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+
+            // Auth session
+            Session session = Session.getInstance(props, new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(senderEmail, senderPassword);
+                }
+            });
+
+            // Compose message
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(senderEmail));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));
+            message.setSubject("✅ Password Updated Successfully");
+
+            // Email HTML content
+            String htmlContent = "<h2 style='color:#27AE60;'>🎉 password updated Successfully !</h2>"
+                    + "<p style='font-size:16px;'>Hello there! 👋<br><br>"
+                    + "password updated <strong>successful</strong>.<br><br>"
+                    
+                    + "<p style='font-size:15px; color:#555;'>If you have not done this , feel free to reach out to our support team.</p>"
+                    + "<hr><p style='font-size:13px; color:#999;'>- Regards,<br><strong>Admin Team</strong></p>";
+
+            message.setContent(htmlContent, "text/html; charset=utf-8");
+
+            // Send
+            Transport.send(message);
+           
         }
     }
     

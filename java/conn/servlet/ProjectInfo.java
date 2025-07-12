@@ -66,5 +66,5 @@ public class ProjectInfo {
 		this.filepath = filepath;
 	}
 
-    // Getters and Setters (Auto-generate via IDE or Lombok)
+    
 }

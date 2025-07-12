@@ -1,5 +1,6 @@
 package conn.servlet;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,6 +19,7 @@ import conn.dao.Daomethodsimpl;
 public class Updatepasswordservlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
    Daomethodsimpl dao=new Daomethodsimpl();
+   Mailutility mail=new Mailutility();
     public Updatepasswordservlet() {
         super();
         // TODO Auto-generated constructor stub
@@ -36,6 +38,12 @@ public class Updatepasswordservlet extends HttpServlet {
 	    		
 	    		
 	    		int sid=(int)session.getAttribute("sid");
+	    		try {
+					mail.sendpasswordupdatemail(email);
+				} catch (MessagingException e) {
+					
+					e.printStackTrace();
+				}
 	    		session.setAttribute("passwordUpdate", "success");
 	    		dao.logactivity(sid, "PASSWORD_CHANGE", "Password updated");
 	    		response.sendRedirect("welcome.jsp");

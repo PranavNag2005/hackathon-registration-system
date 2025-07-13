@@ -9,6 +9,7 @@ public class Project {
     private String techStack;
     private String githubUrl;
    private boolean docsSubmitted;
+   private String filepath;
 
     public String getTitle() {
         return title;
@@ -61,5 +62,11 @@ public class Project {
     public boolean isDocsSubmitted() {
     	return docsSubmitted;
     }
+	public String getFilepath() {
+		return filepath;
+	}
+	public void setFilepath(String filepath) {
+		this.filepath = filepath;
+	}
     
 }

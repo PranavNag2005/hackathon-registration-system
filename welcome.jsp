@@ -24,8 +24,19 @@
     String passwordUpdate = request.getParameter("password");
     Project project = dao.getProjectBySid(userId);
     boolean githubSubmitted = project != null && project.isGithubSubmitted();
+    
     boolean docsSubmitted = project != null && project.isDocsSubmitted();
+    String githuburl = (project != null) ? project.getGithubUrl() : "";
 %>
+<%
+   java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMMM dd, yyyy 'at' hh:mm a");
+java.sql.Timestamp deadline = (java.sql.Timestamp) request.getAttribute("submissionDeadline");
+
+String formattedDeadline = (deadline != null) ? sdf.format(deadline) : "Deadline not set";
+%>
+
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -325,7 +336,7 @@
     <!-- Top Navigation Bar -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="welcome.jsp">
                 <i class="fas fa-code me-2"></i>HackX
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -348,6 +359,15 @@
                            <i class="fas fa-file-word me-1"></i> Submit Docs
                         </a>
                     </li>
+                    <li>
+                    <%
+   Boolean showResultsToUsers = (Boolean) request.getAttribute("showResultsToUsers");
+   if (showResultsToUsers != null && showResultsToUsers) {
+       %><a class="nav-link" href="Topprojectservlet">View Results</a>
+   <%} else {
+       
+   }
+%></li>
                 </ul>
                 <div class="dropdown">
                     <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown">
@@ -382,7 +402,8 @@
                         <i class="fas <%= hasProject && githubSubmitted && docsSubmitted ? "fa-check-circle" : "fa-clock" %> me-1"></i>
                         <%= hasProject && githubSubmitted && docsSubmitted ? "Submission Complete" : "Submission Pending" %>
                     </span>
-                    <small class="text-muted">Deadline: June 30, 2023 at 11:59 PM</small>
+                    <small class="text-muted">Deadline: <%= formattedDeadline %></small>
+
                 </div>
             </div>
           
@@ -433,7 +454,7 @@
                                     <div class="mt-2">
                                         <small>Submitted URL:</small><br>
                                         <span class="text-truncate d-inline-block" style="max-width: 200px;">
-                                            <%= project.getGithubUrl() %>
+                                            <a href="<%=project.getGithubUrl() %>">View Link</a>
                                         </span>
                                     </div>
                                 <% } else { %>
@@ -468,7 +489,7 @@
                                         <i class="fas fa-lock"></i> Locked
                                     </button>
                                     <div class="mt-2">
-                                        <a href="download?file=<%= project.getTitle() %>" 
+                                        <a href="<%=project.getFilepath() %>" 
                                            class="btn btn-outline-secondary btn-sm">
                                             <i class="fas fa-download"></i> Download Document
                                         </a>

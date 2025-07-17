@@ -34,7 +34,7 @@
         		   int rated = (Integer) session.getAttribute("rated");
         		    int pending = (Integer) session.getAttribute("pending");
 
-        		    
+        		 
 
 %>
 <!DOCTYPE html>
@@ -281,13 +281,21 @@
                  <li class="nav-item">
   <a class="nav-link" href="Adminviewprojectservlet"  >
      View Submissions
-  </a>   
+  </a>   </li>
   <li class="nav-item">
   <a class="nav-link" href="Topprojectservlet"  >
      Top Projects
-  </a>   
-                    
+  </a>   </li>
+ <% 
+Boolean specialaccess = (Boolean) session.getAttribute("showUpdateForm");
+if (specialaccess != null && specialaccess) {
+%>
+    <li class="nav-item"><a class="nav-link" href="eventdetails.jsp">Update Event</a></li>
+<% 
+} 
+%>      
                 </ul>
+               
                 <div class="dropdown">
                     <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown">
                         <img src="https://ui-avatars.com/api/?name=<%= userName %>&background=6C63FF&color=fff" 

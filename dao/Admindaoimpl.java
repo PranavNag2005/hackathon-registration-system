@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import conn.servlet.Eventconfig;
 import conn.servlet.ProjectInfo;
 import conn.servlet.TopProjectinfo;
 import conn.servlet.Users;
@@ -157,7 +158,7 @@ public class Admindaoimpl {
 	public List<Users> viewUsers() {
 	    List<Users> userList = new ArrayList<>();
 
-	    String query = "SELECT name, email, phonenumber, dateofbirth,college_name,branch FROM users";
+	    String query = "SELECT name, email, phonenumber, dateofbirth,college_name,branch,year_of_study FROM users";
 
 	    try (Connection conn = Dbconnection.getconnection()) {
 	        Statement st = conn.createStatement();
@@ -173,6 +174,7 @@ public class Admindaoimpl {
 	            user.setDateOfBirth(rs.getDate("dateofbirth"));
 	            user.setCollegeName(rs.getString("college_name"));
 	            user.setBranch(rs.getString("branch"));
+	            user.setYearOfStudy(rs.getString("year_of_study"));	
 	            userList.add(user);
 	        }
 
@@ -306,5 +308,128 @@ public Map<String, Integer> getRatingStatusByAdmin(String Adminname) {
     statusMap.put("pending", total - rated);
 
     return statusMap;
+}
+public List<Users> getUsersByFilters(String branch, String college, String year) {
+    List<Users> filteredList = new ArrayList<>();
+
+    StringBuilder query = new StringBuilder("SELECT * FROM users WHERE 1=1");
+    List<Object> params = new ArrayList<>();
+
+    if (branch != null && !branch.isEmpty()) {
+        query.append(" AND branch = ?");
+        params.add(branch);
+    }
+    if (college != null && !college.isEmpty()) {
+        query.append(" AND college_name LIKE ?");
+        params.add("%" + college + "%");
+    }
+    if (year != null && !year.isEmpty()) {
+        query.append(" AND year_of_study = ?");
+        params.add(Integer.parseInt(year));
+    }
+
+    try (Connection conn = Dbconnection.getconnection();
+         PreparedStatement pst = conn.prepareStatement(query.toString())) {
+
+        for (int i = 0; i < params.size(); i++) {
+            pst.setObject(i + 1, params.get(i));
+        }
+
+        ResultSet rs = pst.executeQuery();
+        while (rs.next()) {
+            Users user = new Users();
+            // Populate all fields from result set
+            filteredList.add(user);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return filteredList;
+}
+public Eventconfig getEventConfig() {
+    Eventconfig config = new Eventconfig();
+    String query = "SELECT * FROM eventconfig ORDER BY id DESC LIMIT 1";
+
+    try (Connection conn = Dbconnection.getconnection();
+         PreparedStatement pst = conn.prepareStatement(query);
+         ResultSet rs = pst.executeQuery()) {
+
+        if (rs.next()) {
+            config.setRegistrationDeadline(rs.getTimestamp("registration_deadline"));
+            config.setSubmissionDeadline(rs.getTimestamp("submission_deadline"));
+            config.setResultsDeclaration(rs.getTimestamp("results_declaration"));
+            config.setEventStatus(rs.getString("event_status"));
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return config;
+}
+public boolean allProjectsRatedByAllAdmins() {
+    String sql = "SELECT COUNT(DISTINCT admin_id) AS total_admins FROM Admins";
+    String sql2 = "SELECT COUNT(DISTINCT pid) AS total_projects FROM project";
+    String sql3 = "SELECT COUNT(*) FROM ratings";
+
+    try (Connection con = Dbconnection.getconnection()) {
+        int totalAdmins = 0;
+        int totalProjects = 0;
+        int totalRatings = 0;
+
+        // Count admins
+        try (PreparedStatement ps1 = con.prepareStatement(sql);
+             ResultSet rs1 = ps1.executeQuery()) {
+            if (rs1.next()) totalAdmins = rs1.getInt(1);
+        }
+
+        // Count projects
+        try (PreparedStatement ps2 = con.prepareStatement(sql2);
+             ResultSet rs2 = ps2.executeQuery()) {
+            if (rs2.next()) totalProjects = rs2.getInt(1);
+        }
+
+        // Count total ratings
+        try (PreparedStatement ps3 = con.prepareStatement(sql3);
+             ResultSet rs3 = ps3.executeQuery()) {
+            if (rs3.next()) totalRatings = rs3.getInt(1);
+        }
+
+        // Return true if all projects rated by all admins
+        return totalRatings >= totalAdmins * totalProjects;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+public void contactquery(String name,String email,String subject,String message) {
+	String query="insert into contactqueries(name,email,subject,message) values (?,?,?,?)";
+	try(Connection conn=Dbconnection.getconnection()){
+		PreparedStatement pt=conn.prepareStatement(query);
+		pt.setString(1, name);
+		pt.setString(2, email);
+		pt.setString(3, subject);
+		pt.setString(4, message);
+		int rs=pt.executeUpdate();
+	} catch (SQLException e) {
+		
+		e.printStackTrace();
+	}
+}
+public boolean checkAdminAccess(int adminId) throws SQLException {
+    String sql = "SELECT specialaccess FROM admins WHERE admin_id = ?";
+    try(Connection conn=Dbconnection.getconnection()){
+    	PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, adminId);
+        ResultSet rs = ps.executeQuery();
+        return rs.next() && rs.getBoolean("specialaccess");
+    }
+    catch(SQLException e) {
+    	e.printStackTrace();
+    	return false;
+    }
+    
 }
 }

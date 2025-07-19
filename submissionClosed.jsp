@@ -1,4 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+   java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMMM dd, yyyy 'at' hh:mm a");
+java.sql.Timestamp deadline = (java.sql.Timestamp) request.getAttribute("SubmissionDeadline");
+
+String formattedDeadline = (deadline != null) ? sdf.format(deadline) : "Deadline not set";
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -213,7 +219,7 @@
                 <i class="fas fa-ban"></i>
             </div>
             <h1>All Submissions Are Closed</h1>
-            <p>The submission period for HackX 2025 has ended as of <strong>July 14, 2025 at 11:59 PM</strong>.</p>
+            <p>The submission period for HackX 2025 has ended as of <strong><%=formattedDeadline  %></strong>.</p>
             
             <div class="notice-box">
                 <i class="fas fa-exclamation-circle" style="color: var(--warning); margin-right: 8px;"></i>
@@ -243,7 +249,7 @@
             
             <div style="margin-top: 30px;">
                 <a href="welcome.jsp" class="btn">Return to Home</a>
-                <a href="#results" class="btn btn-warning">View Results Timeline</a>
+               
                 <a href="welcome.jsp#contact" class="btn btn-outline">Contact Organizers</a>
             </div>
         </div>

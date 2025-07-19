@@ -1,4 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+   java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMMM dd, yyyy 'at' hh:mm a");
+java.sql.Timestamp deadline = (java.sql.Timestamp) request.getAttribute("RegistrationDeadline");
+
+String formattedDeadline = (deadline != null) ? sdf.format(deadline) : "Deadline not set";
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -159,8 +165,8 @@
                 <i class="fas fa-calendar-times"></i>
             </div>
             <h1>Registration Closed</h1>
-            <p>We're sorry, but registration for HackX 2025 has now closed. The deadline for submissions was <strong>July 14, 2025</strong>.</p>
-            <p>Thank you to everyone who registered! We're excited to see what you'll create during the hackathon.</p>
+            <p>We're sorry, but registration for HackX 2025 has now closed. The deadline for Registrations was <strong><%= formattedDeadline %></strong>.</p>
+            <p>If you have any queries kindly contact our support Team, Thankyou.</p>
             
             <div style="margin-top: 30px;">
                 <a href="index.html" class="btn">Return to Home</a>

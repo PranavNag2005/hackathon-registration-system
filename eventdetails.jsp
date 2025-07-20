@@ -1,4 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+    conn.servlet.Event event = (conn.servlet.Event) request.getAttribute("event");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -113,7 +116,19 @@
         #completed:checked + label {
             background-color: #4895ef;
         }
-        
+        .btn-delete{
+        background-color: red;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-top:40px;
+        }
         .btn-submit {
             background-color: var(--primary);
             color: white;
@@ -130,6 +145,8 @@
         .btn-submit:hover {
             background-color: var(--secondary);
         }
+        .btn-delete:hover{
+        background-color:rgb(200,0,0);}
         
         .timeline-preview {
             margin-top: 40px;
@@ -182,42 +199,48 @@
         <form action="Eventservlet" method="POST">
             <div class="form-group">
                 <label for="eventName">Event Name</label>
-                <input type="text" id="eventName" name="eventName" required>
+               <input type="text" id="eventName" name="eventName" value="<%= event != null ? event.getEventName() : "" %>" required>
             </div>
             
             <div class="form-group">
                 <label for="eventCode">Event ID/Code</label>
-                <input type="text" id="eventCode" name="eventCode">
+                <input type="text" id="eventCode" name="eventCode" value="<%= event != null ? event.getEventid() : "" %>" required>
             </div>
             
             <div class="form-group">
                 <label for="regDeadline">Registration Deadline</label>
-                <input type="datetime-local" id="regDeadline" name="regDeadline" required>
+                <input type="datetime-local" id="regDeadline" name="regDeadline" value="<%= event != null ? event.getRegDeadline() : "" %>" required>
             </div>
             
             <div class="form-group">
                 <label for="subDeadline">Submission Deadline</label>
-                <input type="datetime-local" id="subDeadline" name="subDeadline" required>
+               <input type="datetime-local" id="subDeadline" name="subDeadline" value="<%= event != null ? event.getSubDeadline() : "" %>" required>
             </div>
             
             <div class="form-group">
                 <label for="resultDate">Result Declaration Date</label>
-                <input type="datetime-local" id="resultDate" name="resultDate" required>
+                <input type="datetime-local" id="resultDate" name="resultDate" value="<%= event != null ? event.getResultDate() : "" %>" required>
             </div>
             
             <div class="form-group">
                 <label>Current Status</label>
                 <div class="status-options">
                     <div class="status-option">
-                        <input type="radio" id="upcoming" name="status" value="upcoming" checked>
+                        <input type="radio" id="upcoming" name="status" value="upcoming"
+       <%= event != null && "upcoming".equals(event.getStatus()) ? "checked" : "" %>>
+                        
                         <label for="upcoming">Upcoming</label>
                     </div>
                     <div class="status-option">
-                        <input type="radio" id="ongoing" name="status" value="ongoing">
+                       <input type="radio" id="ongoing" name="status" value="ongoing"
+       <%= event != null && "ongoing".equals(event.getStatus()) ? "checked" : "" %>>
+
                         <label for="ongoing">Ongoing</label>
                     </div>
                     <div class="status-option">
-                        <input type="radio" id="completed" name="status" value="completed">
+                        <input type="radio" id="completed" name="status" value="completed"
+       <%= event != null && "completed".equals(event.getStatus()) ? "checked" : "" %>>
+
                         <label for="completed">Completed</label>
                     </div>
                 </div>
@@ -225,38 +248,23 @@
             
             <div class="form-group">
                 <label for="notes">Additional Notes</label>
-                <textarea id="notes" name="notes" rows="3"></textarea>
+                <textarea id="notes" name="notes" rows="3"><%= event != null ? event.getNotes() : "" %></textarea>
             </div>
             
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" name="sendReminders"> Send email reminders to participants
-                </label>
-            </div>
-            
+       
             <button type="submit" class="btn-submit">Save Event Timeline</button>
+           
         </form>
+        <div class="form-group">
+       <% if (event != null) { %>
+    <form action="Eventservlet" method="POST" onsubmit="return confirm('Are you sure you want to delete this event?');">
+        <input type="hidden" name="action" value="delete">
+        <button type="submit" class="btn-delete">Delete Event</button>
+    </form>
+<% } %></div>  
         
-        <div class="timeline-preview">
-            <h3>Timeline Preview</h3>
-            <div class="timeline-item">
-                <span class="timeline-date">Registration Deadline:</span>
-                <span id="preview-reg">Not set</span>
-            </div>
-            <div class="timeline-item">
-                <span class="timeline-date">Submission Deadline:</span>
-                <span id="preview-sub">Not set</span>
-            </div>
-            <div class="timeline-item">
-                <span class="timeline-date">Result Declaration:</span>
-                <span id="preview-result">Not set</span>
-            </div>
-            <div class="timeline-item">
-                <span class="timeline-date">Current Status:</span>
-                <span id="preview-status" class="status-upcoming">Upcoming</span>
-            </div>
         </div>
-    </div>
+    
 
     <script>
         // Update preview in real-time

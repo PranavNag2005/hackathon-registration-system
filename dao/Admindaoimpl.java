@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import conn.servlet.Event;
 import conn.servlet.Eventconfig;
 import conn.servlet.ProjectInfo;
 import conn.servlet.TopProjectinfo;
@@ -431,5 +432,94 @@ public boolean checkAdminAccess(int adminId) throws SQLException {
     	return false;
     }
     
+}
+public void eventconfig(String regdeadline, String subdeadline, String resultdate, String eventstatus, String eventname,
+		String eventcode, String notes) {
+	String query="insert into eventconfig(registration_deadline,submission_deadline,results_declaration,event_status,eventname,eventid,notes) values (?,?,?,?,?,?,?)";
+	try(Connection conn=Dbconnection.getconnection()){
+		PreparedStatement pt=conn.prepareStatement(query);
+		pt.setString(1, regdeadline);
+		pt.setString(2, subdeadline);
+		pt.setString(3, resultdate);
+		pt.setString(4, eventstatus);
+		pt.setString(5, eventname);
+		pt.setString(6, eventcode);
+		pt.setString(7, notes);
+	int rs=pt.executeUpdate();
+
+	} catch (SQLException e) {
+		
+		e.printStackTrace();
+	}
+	
+}
+public boolean hasevent(){
+	String query="select * from eventconfig";
+	try(Connection conn=Dbconnection.getconnection()){
+		PreparedStatement pt=conn.prepareStatement(query);
+		ResultSet rs=pt.executeQuery();
+		return rs.next();
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	return false;
+	}
+}
+public Event getSingleEvent() {
+    String query = "SELECT * FROM eventconfig LIMIT 1";
+    try (Connection conn = Dbconnection.getconnection();
+         PreparedStatement pt = conn.prepareStatement(query);
+         ResultSet rs = pt.executeQuery()) {
+
+        if (rs.next()) {
+            Event event = new Event();
+            event.setEventName(rs.getString("eventname"));
+            event.setRegDeadline(rs.getString("registration_deadline"));
+            event.setSubDeadline(rs.getString("submission_deadline"));
+            event.setResultDate(rs.getString("results_declaration"));
+            event.setStatus(rs.getString("event_status"));
+            event.setNotes(rs.getString("notes"));
+            event.setEventid(rs.getString("eventid"));
+            return event;
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
+public void updateeventconfig(String regdeadline, String subdeadline, String resultdate,
+        String eventstatus, String eventname, String eventcode, String notes) {
+
+String query = "UPDATE eventconfig SET registration_deadline = ?, submission_deadline = ?, results_declaration = ?, event_status = ?, eventname = ?, eventid = ?, notes = ?";
+
+try (Connection conn = Dbconnection.getconnection();
+PreparedStatement pt = conn.prepareStatement(query)) {
+
+pt.setString(1, regdeadline);
+pt.setString(2, subdeadline);
+pt.setString(3, resultdate);
+pt.setString(4, eventstatus);
+pt.setString(5, eventname);
+pt.setString(6, eventcode);
+pt.setString(7, notes);
+
+pt.executeUpdate();
+
+} catch (SQLException e) {
+e.printStackTrace();
+}
+}
+public void deleteEvent() {
+    String query = "DELETE FROM eventconfig"; // Only one row, no WHERE needed
+    try (Connection conn = Dbconnection.getconnection();
+         PreparedStatement pt = conn.prepareStatement(query)) {
+
+        pt.executeUpdate();
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
 }
 }

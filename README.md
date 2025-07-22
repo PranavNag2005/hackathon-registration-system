@@ -1,8 +1,26 @@
-🛠️ Hackathon Registration System
-A Java-based web portal for managing solo hackathon events with robust backend logic, admin control, and clean servlet/JSP integration.
-🚀 Features
-- Admin dashboard for creating, updating, and deleting events and participants
-- Servlet-driven backend with modular DAO and DTO patterns
-- JSP frontend with form prefill, validation, and dynamic rendering
-- Unified insert/update/delete logic for single-event workflows
-- Clean separation of concerns for maintainability and scalability
+## 🛠️ Hackathon Registration System
+
+A **Java-based web portal** designed for managing **solo hackathon events** with strong backend architecture and clean servlet/JSP integration.
+
+---
+
+### 🚀 Features
+
+- ✅ **Admin Dashboard**  
+  Create, update, and delete events and participants with ease.
+
+- 🧩 **Modular Backend Architecture**  
+  Servlets built with clean DAO and DTO patterns for scalability and maintainability.
+
+- 🖥️ **Dynamic JSP Frontend**  
+  Supports form prefill, validation, and dynamic content rendering.
+
+- 🔄 **Unified Workflow Logic**  
+  Seamless insert/update/delete functionality using a single-event workflow model.
+
+- 🧼 **Separation of Concerns**  
+  Backend logic, UI rendering, and data access are cleanly separated for clarity.
+
+---
+
+> 💡 Optimized for maintainability, clarity, and real-world event management workflows.

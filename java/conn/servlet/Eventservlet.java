@@ -9,27 +9,20 @@ import java.io.IOException;
 
 import conn.dao.Admindaoimpl;
 
-/**
- * Servlet implementation class Eventservlet
- */
+
 @WebServlet("/Eventservlet")
 public class Eventservlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	Admindaoimpl dao=new Admindaoimpl();
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
+    
     public Eventservlet() {
         super();
-        // TODO Auto-generated constructor stub
+       
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Event event = dao.getSingleEvent(); // Fetch first (or only) row from DB
+        Event event = dao.getSingleEvent(); 
         if (event != null) {
             request.setAttribute("event", event);
             request.setAttribute("isUpdate", true);
@@ -55,7 +48,7 @@ public class Eventservlet extends HttpServlet {
 		String eventstatus=request.getParameter("status");
 		String resultdate=request.getParameter("resultDate");
 		String notes=request.getParameter("notes");
-		boolean eventExists = dao.hasevent(); // returns true if row already exists
+		boolean eventExists = dao.hasevent(); 
 
 	    if (eventExists) {
 	    	dao.updateeventconfig(regdeadline,subdeadline,resultdate,eventstatus,eventname,eventcode,notes);

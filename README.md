@@ -1,26 +1,81 @@
-## 🛠️ Hackathon Registration System
+# 🏁 Individual Hackathon Portal – Event Flow, Submissions & Admin Analytics
 
-A **Java-based web portal** designed for managing **solo hackathon events** with strong backend architecture and clean servlet/JSP integration.
-
----
-
-### 🚀 Features
-
-- ✅ **Admin Dashboard**  
-  Create, update, and delete events and participants with ease.
-
-- 🧩 **Modular Backend Architecture**  
-  Servlets built with clean DAO and DTO patterns for scalability and maintainability.
-
-- 🖥️ **Dynamic JSP Frontend**  
-  Supports form prefill, validation, and dynamic content rendering.
-
-- 🔄 **Unified Workflow Logic**  
-  Seamless insert/update/delete functionality using a single-event workflow model.
-
-- 🧼 **Separation of Concerns**  
-  Backend logic, UI rendering, and data access are cleanly separated for clarity.
+This project is a **backend-powered portal** for managing single-user hackathons with time-based automation, analytics-driven admin dashboards, and strict workflow control for fairness and clarity. Designed for **one event at a time**, it streamlines registration, project submission, rating, and result declaration with minimal manual intervention.
 
 ---
 
-> 💡 Optimized for maintainability, clarity, and real-world event management workflows.
+## 🚀 Tech Stack
+
+- **Java Servlet + JSP** – Backend logic and dynamic page rendering  
+- **MySQL** – Relational database for participants, projects, events  
+- **HTML, CSS, JavaScript** – Interactive frontend components  
+- **DAO Pattern** – Clean data abstraction  
+- **AJAX** – Time-sensitive actions and live data updates  
+- *(Spring Boot migration planned for future releases)*
+
+---
+
+## 🌟 Features Overview
+
+### 👤 User Workflow
+
+- 🔒 **Registration within Deadline Only**  
+  Users can register only before the deadline; portal locks post expiry.
+
+- 📝 **Project Submission with Field Locking**  
+  After registration, users access:
+  - GitHub project link field  
+  - Word document upload field  
+  - Final submit button  
+
+  Once submitted:
+  - All fields become read-only  
+  - `Edit Project` stays enabled for tweaks
+
+- ⏲️ **Automated Result Flow**  
+  - After hackathon ends, results are published **2 hours later**  
+  - No manual refresh needed
+
+---
+
+### 🧑‍💼 Admin Panel & Analytics
+
+- 📊 **Dashboard with Pie Charts**  
+  - Live charts for:
+    - Registered vs. non-registered users  
+    - Project submissions  
+    - Rating distribution  
+
+- 🧮 **User Management**  
+  - View full participant list  
+  - Filter users based on status or rating  
+  - Download full list to `.csv`  
+    *(Filtered results not downloadable — ensures unbiased data extraction)*
+
+- 🌟 **Rating & Results Engine**  
+  - Admin assigns ratings post-hackathon  
+  - Results page highlights **Top Projects** based on scores
+
+- 📧 **Email Notifications (Time-Based)**  
+  - Triggers for registration confirmation  
+  - Submission deadline reminders  
+  - Result announcement alerts
+
+- ⚙️ **Event Control**  
+  - Modify event settings live (title, deadline, duration)  
+  - Admin has full control over transitions and announcements
+
+---
+
+## 🛠 Platform Behavior
+
+- 🧍 **Single-User Mode**  
+  No teams or grouped submissions — built for individual competitors
+
+- 🕒 **One Event Handling**  
+  Supports one event at a time for high system stability  
+  Results auto-declared after event closes + 2 hours
+
+---
+
+

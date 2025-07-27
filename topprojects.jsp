@@ -388,21 +388,22 @@ List<TopProjectinfo> topProjects = (List<TopProjectinfo>)request.getAttribute("t
                                 for (TopProjectinfo project : topProjects) {
                         %>
                         <tr>
-                            <td>
-                                <%= rank %>
-                                <% if (rank == 1) { %>
-                                    <span style="font-size: 2rem;">🥇</span>
-                                <% } else if (rank == 2) { %>
-                                    <span style="font-size: 2rem;">🥈</span>
-                                <% } else if (rank == 3) { %>
-                                    <span style="font-size: 2rem;">🥉</span>
-                                <% } %>
-                            </td>
-                            <td><%= project.getPid() %></td>
-                            <td><%= project.getProjectTitle() %></td>
-                            <td><%= project.getStudentName()%></td>
-                            <td><%=project.getAvgRating() %></td>
-                            <td><%=project.getTotalRaters() %></td>     
+                            <td style="font-size:1.5rem;text-align:center;">
+    <% if (rank == 1) { %>
+        <span style="font-size: 2rem;">🥇</span>
+    <% } else if (rank == 2) { %>
+        <span style="font-size: 2rem;">🥈</span>
+    <% } else if (rank == 3) { %>
+        <span style="font-size: 2rem;">🥉</span>
+    <% } else { %>
+        <%= rank %>
+    <% } %>
+</td>
+                            <td style="font-size:1.5rem;text-align:center;"><%= project.getPid() %></td>
+                            <td style="font-weight:bold;"><%= project.getProjectTitle() %></td>
+                            <td style="font-weight:bold;"><%= project.getStudentName()%></td>
+                            <td style="font-size:1.5rem;text-align:center;"><%=project.getAvgRating() %></td>
+                            <td style="font-size:1.5rem;text-align:center;"><%=project.getTotalRaters() %></td>     
                         </tr>
                         <% rank+=1; %>
                         <% } %>

@@ -10,7 +10,6 @@ This project is a **backend-powered portal** for managing single-user hackathons
 - **MySQL** – Relational database for participants, projects, events  
 - **HTML, CSS, JavaScript** – Interactive frontend components  
 - **DAO Pattern** – Clean data abstraction  
-- **AJAX** – Time-sensitive actions and live data updates  
 - *(Spring Boot migration planned for future releases)*
 
 ---
@@ -49,7 +48,7 @@ This project is a **backend-powered portal** for managing single-user hackathons
 - 🧮 **User Management**  
   - View full participant list  
   - Filter users based on status or rating  
-  - Download full list to `.csv`  
+  - Download full list to `.pdf`  
     *(Filtered results not downloadable — ensures unbiased data extraction)*
 
 - 🌟 **Rating & Results Engine**  

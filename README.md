@@ -23,6 +23,7 @@ This project is a **backend-powered portal** for managing single-user hackathons
 
 - 📝 **Project Submission with Field Locking**  
   After registration, users access:
+  - Project Details Submission Field
   - GitHub project link field  
   - Word document upload field  
   - Final submit button  
@@ -30,15 +31,19 @@ This project is a **backend-powered portal** for managing single-user hackathons
   Once submitted:
   - All fields become read-only  
   - `Edit Project` stays enabled for tweaks
+  - User can view the data after their submission
 
 - ⏲️ **Automated Result Flow**  
-  - After hackathon ends, results are published **2 hours later**  
+  - After hackathon ends, results are published **6 hours later**  
   - No manual refresh needed
 
 ---
 
 ### 🧑‍💼 Admin Panel & Analytics
-
+- **Super Admin **
+- Super Admin can Update the Events and delete the Event
+- Super Admin can create the Event
+  
 - 📊 **Dashboard with Pie Charts**  
   - Live charts for:
     - Registered vs. non-registered users  

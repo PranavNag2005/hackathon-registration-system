@@ -40,7 +40,7 @@ This project is a **backend-powered portal** for managing single-user hackathons
 ---
 
 ### 🧑‍💼 Admin Panel & Analytics
-- **Super Admin **
+- **Super Admin**
 - Super Admin can Update the Events and delete the Event
 - Super Admin can create the Event
   

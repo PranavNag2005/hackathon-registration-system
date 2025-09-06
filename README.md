@@ -34,7 +34,7 @@ This project is a **backend-powered portal** for managing single-user hackathons
   - User can view the data after their submission
 
 - ⏲️ **Automated Result Flow**  
-  - After hackathon ends, results are published **6 hours later**  
+  - After hackathon ends, results are published **2 hours later**  
   - No manual refresh needed
 
 ---
@@ -78,7 +78,7 @@ This project is a **backend-powered portal** for managing single-user hackathons
 
 - 🕒 **One Event Handling**  
   Supports one event at a time for high system stability  
-  Results auto-declared after event closes + 2 hours
+  Results auto-declared after event closes usually 2 hours
 
 ---
 
